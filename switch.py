@@ -2,16 +2,25 @@ from time import sleep
 import RPi.GPIO as GPIO
 import subprocess
 
-GPIO.setmode(GPIO.BCM)
 
-GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#define all the pin number
+blinkLed = 3;
+pushButton = 11
+
+GPIO.setmode(GPIO.BOARD)
+
+GPIO.setup(pushButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(blinkLed, GPIO.OUT)
+GPIO.output(blinkLed,GPIO.LOW)
 
 record = 0
 buttonPressed = 0
+blink = 'high'
 x = 1;
 while x > 0:
-	#get input from pin 18
-	input_state = GPIO.input(18)
+	#get input from pin pushButton
+	input_state = GPIO.input(pushButton)
+	
 	#if button is being press
 	if input_state == False:
 		buttonPressed += 1
@@ -29,10 +38,22 @@ while x > 0:
 				print('Start Recording')
 				record = 1
 				buttonPressed = 0
+				
+				GPIO.output(blinkLed,GPIO.HIGH)
+			else:
+				GPIO.PWM(blinkLed,100)
+				if blink == 'high':
+					GPIO.output(blinkLed,GPIO.HIGH)
+					blink = 'low'
+				else:
+					GPIO.output(blinkLed,GPIO.LOW)
+					blink = 'high'
+				
 		else:
 			#if recording has started and button being press more than 3 seconds. Stop recording
 			if buttonPressed > 3:
 				print('Stop Recording')
 				record = 0
 				buttonPressed = 0
-	sleep(1) #sleep for 1 second
+	sleep(1) #sleep for 1 second				
+	#GPIO.cleanup()
