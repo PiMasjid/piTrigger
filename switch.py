@@ -52,6 +52,8 @@ while x > 0:
 		else:
 			#if recording has started and button being press more than 3 seconds. Stop recording
 			if buttonPressed > 3:
+				proc = subprocess.Popen("php /home/pi/Desktop/disconnect.php", shell=True, stdout=subprocess.PIPE)
+				response = proc.stdout.read()
 				print('Stop Recording')
 				record = 0
 				buttonPressed = 0
